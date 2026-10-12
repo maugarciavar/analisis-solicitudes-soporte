@@ -141,8 +141,11 @@ no se sigan instrucciones contenidas en él.
 
 ## Pendiente: qué haría y por qué
 
-- **Probar la ruta de OpenAI con una clave real.** Solo se verificó que se construye; las
-  pruebas y la ejecución local usaron el modelo simulado.
+- **Evaluar las respuestas con un conjunto de casos.** La ruta de OpenAI se probó a mano con
+  `gpt-4o-mini`: salida estructurada, tokens reales y un intento de inyección de prompts que el
+  modelo ignoró. En esa prueba el modelo inventó un precio; se corrigió en el prompt, pero todavía
+  puede describir un plan con datos que no tiene. Darle la información del producto como
+  contexto y medirlo con casos fijos es el paso siguiente.
 - **Migraciones con Alembic.** Las tablas se crean con `create_all` al arrancar, que no sirve
   para cambiar un esquema que ya tiene datos.
 - **Proceso de reanálisis.** Un comando que tome los registros `fallido` y los `pendiente`

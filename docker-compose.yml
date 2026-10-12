@@ -1,0 +1,32 @@
+# Entorno local completo: API + CRM simulado + PostgreSQL.
+# Las credenciales de la base son solo para desarrollo local.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://soporte:${POSTGRES_PASSWORD:-soporte_local}@db:5432/soporte
+      CRM_URL: http://crm:9000
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      crm:
+        condition: service_started
+
+  crm:
+    build: .
+    command: ["uvicorn", "mock_crm:app", "--host", "0.0.0.0", "--port", "9000"]
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: soporte
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-soporte_local}
+      POSTGRES_DB: soporte
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soporte -d soporte"]
+      interval: 3s
+      timeout: 3s
+      retries: 10

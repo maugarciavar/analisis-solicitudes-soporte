@@ -54,10 +54,12 @@ def _medir_uso(respuesta: AIMessage, mensajes: list[BaseMessage]) -> Uso:
 
 def calcular_costo(tokens_entrada: int, tokens_salida: int, settings: Settings) -> Decimal:
     millon = Decimal(1_000_000)
-    return (
+    costo = (
         tokens_entrada * settings.precio_entrada_por_millon
         + tokens_salida * settings.precio_salida_por_millon
     ) / millon
+    # Misma precisión que la columna de la base, para que POST y GET devuelvan lo mismo.
+    return costo.quantize(Decimal("0.00000001"))
 
 
 def clasificar(modelo: BaseChatModel, texto: str) -> tuple[Clasificacion, Uso]:
